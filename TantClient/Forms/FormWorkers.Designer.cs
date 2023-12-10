@@ -32,11 +32,12 @@
             this.labelWorkerChoose = new System.Windows.Forms.Label();
             this.panelWorkerChoose = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.labelWhatDo = new System.Windows.Forms.Label();
-            this.richTextBoxChoosenWorker = new System.Windows.Forms.RichTextBox();
-            this.buttonPenalty = new System.Windows.Forms.Button();
-            this.buttonReward = new System.Windows.Forms.Button();
             this.buttonDeleteWorker = new System.Windows.Forms.Button();
+            this.buttonReward = new System.Windows.Forms.Button();
+            this.buttonPenalty = new System.Windows.Forms.Button();
+            this.richTextBoxChoosenWorker = new System.Windows.Forms.RichTextBox();
+            this.labelWhatDo = new System.Windows.Forms.Label();
+            this.buttonAddWorker = new System.Windows.Forms.Button();
             this.panelWorkerChoose.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -49,7 +50,7 @@
             this.listBoxWorkers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
             this.listBoxWorkers.FormattingEnabled = true;
             this.listBoxWorkers.ItemHeight = 23;
-            this.listBoxWorkers.Location = new System.Drawing.Point(17, 107);
+            this.listBoxWorkers.Location = new System.Drawing.Point(17, 138);
             this.listBoxWorkers.Name = "listBoxWorkers";
             this.listBoxWorkers.Size = new System.Drawing.Size(390, 276);
             this.listBoxWorkers.TabIndex = 0;
@@ -68,6 +69,7 @@
             // 
             // panelWorkerChoose
             // 
+            this.panelWorkerChoose.Controls.Add(this.buttonAddWorker);
             this.panelWorkerChoose.Controls.Add(this.listBoxWorkers);
             this.panelWorkerChoose.Controls.Add(this.labelWorkerChoose);
             this.panelWorkerChoose.Dock = System.Windows.Forms.DockStyle.Left;
@@ -89,43 +91,20 @@
             this.panel1.Size = new System.Drawing.Size(523, 450);
             this.panel1.TabIndex = 5;
             // 
-            // labelWhatDo
+            // buttonDeleteWorker
             // 
-            this.labelWhatDo.AutoSize = true;
-            this.labelWhatDo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelWhatDo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
-            this.labelWhatDo.Location = new System.Drawing.Point(27, 41);
-            this.labelWhatDo.Name = "labelWhatDo";
-            this.labelWhatDo.Size = new System.Drawing.Size(307, 25);
-            this.labelWhatDo.TabIndex = 4;
-            this.labelWhatDo.Text = "Что делаем с сотрудником?";
-            // 
-            // richTextBoxChoosenWorker
-            // 
-            this.richTextBoxChoosenWorker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(218)))), ((int)(((byte)(224)))));
-            this.richTextBoxChoosenWorker.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBoxChoosenWorker.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.richTextBoxChoosenWorker.Location = new System.Drawing.Point(32, 129);
-            this.richTextBoxChoosenWorker.Name = "richTextBoxChoosenWorker";
-            this.richTextBoxChoosenWorker.ReadOnly = true;
-            this.richTextBoxChoosenWorker.Size = new System.Drawing.Size(407, 223);
-            this.richTextBoxChoosenWorker.TabIndex = 5;
-            this.richTextBoxChoosenWorker.Text = "";
-            // 
-            // buttonPenalty
-            // 
-            this.buttonPenalty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
-            this.buttonPenalty.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonPenalty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPenalty.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonPenalty.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.buttonPenalty.Location = new System.Drawing.Point(32, 87);
-            this.buttonPenalty.Name = "buttonPenalty";
-            this.buttonPenalty.Size = new System.Drawing.Size(93, 36);
-            this.buttonPenalty.TabIndex = 6;
-            this.buttonPenalty.Text = "Штраф";
-            this.buttonPenalty.UseVisualStyleBackColor = false;
-            this.buttonPenalty.Click += new System.EventHandler(this.buttonPenalty_Click);
+            this.buttonDeleteWorker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.buttonDeleteWorker.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonDeleteWorker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonDeleteWorker.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonDeleteWorker.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.buttonDeleteWorker.Location = new System.Drawing.Point(289, 87);
+            this.buttonDeleteWorker.Name = "buttonDeleteWorker";
+            this.buttonDeleteWorker.Size = new System.Drawing.Size(152, 36);
+            this.buttonDeleteWorker.TabIndex = 8;
+            this.buttonDeleteWorker.Text = "Удалить";
+            this.buttonDeleteWorker.UseVisualStyleBackColor = false;
+            this.buttonDeleteWorker.Click += new System.EventHandler(this.buttonDeleteWorker_Click);
             // 
             // buttonReward
             // 
@@ -142,20 +121,58 @@
             this.buttonReward.UseVisualStyleBackColor = false;
             this.buttonReward.Click += new System.EventHandler(this.buttonReward_Click);
             // 
-            // buttonDeleteWorker
+            // buttonPenalty
             // 
-            this.buttonDeleteWorker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
-            this.buttonDeleteWorker.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonDeleteWorker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonDeleteWorker.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonDeleteWorker.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.buttonDeleteWorker.Location = new System.Drawing.Point(289, 87);
-            this.buttonDeleteWorker.Name = "buttonDeleteWorker";
-            this.buttonDeleteWorker.Size = new System.Drawing.Size(152, 36);
-            this.buttonDeleteWorker.TabIndex = 8;
-            this.buttonDeleteWorker.Text = "Удалить";
-            this.buttonDeleteWorker.UseVisualStyleBackColor = false;
-            this.buttonDeleteWorker.Click += new System.EventHandler(this.buttonDeleteWorker_Click);
+            this.buttonPenalty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.buttonPenalty.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonPenalty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonPenalty.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonPenalty.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.buttonPenalty.Location = new System.Drawing.Point(32, 87);
+            this.buttonPenalty.Name = "buttonPenalty";
+            this.buttonPenalty.Size = new System.Drawing.Size(93, 36);
+            this.buttonPenalty.TabIndex = 6;
+            this.buttonPenalty.Text = "Штраф";
+            this.buttonPenalty.UseVisualStyleBackColor = false;
+            this.buttonPenalty.Click += new System.EventHandler(this.buttonPenalty_Click);
+            // 
+            // richTextBoxChoosenWorker
+            // 
+            this.richTextBoxChoosenWorker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(218)))), ((int)(((byte)(224)))));
+            this.richTextBoxChoosenWorker.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBoxChoosenWorker.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.richTextBoxChoosenWorker.Location = new System.Drawing.Point(32, 129);
+            this.richTextBoxChoosenWorker.Name = "richTextBoxChoosenWorker";
+            this.richTextBoxChoosenWorker.ReadOnly = true;
+            this.richTextBoxChoosenWorker.Size = new System.Drawing.Size(407, 223);
+            this.richTextBoxChoosenWorker.TabIndex = 5;
+            this.richTextBoxChoosenWorker.Text = "";
+            // 
+            // labelWhatDo
+            // 
+            this.labelWhatDo.AutoSize = true;
+            this.labelWhatDo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelWhatDo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.labelWhatDo.Location = new System.Drawing.Point(27, 41);
+            this.labelWhatDo.Name = "labelWhatDo";
+            this.labelWhatDo.Size = new System.Drawing.Size(307, 25);
+            this.labelWhatDo.TabIndex = 4;
+            this.labelWhatDo.Text = "Что делаем с сотрудником?";
+            // 
+            // buttonAddWorker
+            // 
+            this.buttonAddWorker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.buttonAddWorker.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.buttonAddWorker.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonAddWorker.Font = new System.Drawing.Font("Microsoft YaHei", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonAddWorker.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.buttonAddWorker.Location = new System.Drawing.Point(17, 87);
+            this.buttonAddWorker.Name = "buttonAddWorker";
+            this.buttonAddWorker.Size = new System.Drawing.Size(152, 36);
+            this.buttonAddWorker.TabIndex = 9;
+            this.buttonAddWorker.Text = "Добавить";
+            this.buttonAddWorker.UseVisualStyleBackColor = false;
+            this.buttonAddWorker.Click += new System.EventHandler(this.buttonAddWorker_Click);
             // 
             // FormWorkers
             // 
@@ -188,5 +205,6 @@
         private System.Windows.Forms.Button buttonReward;
         private System.Windows.Forms.Button buttonPenalty;
         private System.Windows.Forms.Button buttonDeleteWorker;
+        private System.Windows.Forms.Button buttonAddWorker;
     }
 }

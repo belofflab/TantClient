@@ -108,5 +108,10 @@ namespace TantClient.Forms
         {
             MessageBox.Show("Функция отключена!");
         }
+
+        private void buttonAddWorker_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Функция отключена!");
+        }
     }
 }
