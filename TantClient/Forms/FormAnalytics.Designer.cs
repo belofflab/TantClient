@@ -155,7 +155,6 @@
             this.panelWorkerLink.Name = "panelWorkerLink";
             this.panelWorkerLink.Size = new System.Drawing.Size(637, 697);
             this.panelWorkerLink.TabIndex = 8;
-            this.panelWorkerLink.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // panel2
             // 

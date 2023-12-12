@@ -63,9 +63,9 @@ namespace TantClient.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap upico {
+        internal static System.Drawing.Bitmap ruble {
             get {
-                object obj = ResourceManager.GetObject("upico", resourceCulture);
+                object obj = ResourceManager.GetObject("ruble", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace TantClient.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap uscrooge {
+        internal static System.Drawing.Bitmap upico {
             get {
-                object obj = ResourceManager.GetObject("uscrooge", resourceCulture);
+                object obj = ResourceManager.GetObject("upico", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

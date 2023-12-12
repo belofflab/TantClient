@@ -135,7 +135,8 @@
             this.richTextBoxCashTurnover.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(218)))), ((int)(((byte)(224)))));
             this.richTextBoxCashTurnover.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBoxCashTurnover.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.richTextBoxCashTurnover.Location = new System.Drawing.Point(288, 33);
+            this.richTextBoxCashTurnover.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.richTextBoxCashTurnover.Location = new System.Drawing.Point(288, 53);
             this.richTextBoxCashTurnover.Name = "richTextBoxCashTurnover";
             this.richTextBoxCashTurnover.Size = new System.Drawing.Size(425, 385);
             this.richTextBoxCashTurnover.TabIndex = 22;
@@ -143,10 +144,10 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::TantClient.Properties.Resources.uscrooge;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 33);
+            this.pictureBox1.Image = global::TantClient.Properties.Resources.ruble;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(270, 385);
+            this.pictureBox1.Size = new System.Drawing.Size(270, 314);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 21;
             this.pictureBox1.TabStop = false;

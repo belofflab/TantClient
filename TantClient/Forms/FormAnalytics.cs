@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Security.Policy;
+using TantClient.Models;
+using TantClient.Services;
 
 namespace TantClient.Forms
 {
     public partial class FormAnalytics : Form
     {
+        private readonly AnalyticService _analyticService;
         public FormAnalytics()
         {
             InitializeComponent();
             loadTheme();
+            _analyticService = new AnalyticService();
             DateTime dateTimeNow = DateTime.Now;
             DateTime startOfMonth = new DateTime(dateTimeNow.Year, dateTimeNow.Month, 1);
             DateTime endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
@@ -25,50 +26,9 @@ namespace TantClient.Forms
             dateTimePickerFrom.Value = startOfMonth;
             dateTimePickerTo.Value = endOfMonth;
             getWorkerLinkData(startOfMonth, endOfMonth);
-            LoadChartData(startOfMonth.ToString("yyyy-MM-dd"), endOfMonth.ToString("yyyy-MM-dd"));
+            LoadChartData(startOfMonth, endOfMonth);
         }
 
-        public class Proxy
-        {
-            public int id { get; set; }
-        }
-
-        public class User
-        {
-            public object id { get; set; }
-            public string username { get; set; }
-            public string first_name { get; set; }
-            public string last_name { get; set; }
-            public bool is_free_consulting { get; set; }
-            public bool is_processing { get; set; }
-            public DateTime last_activity { get; set; }
-            public DateTime first_touch { get; set; }
-            public List<object> userpaymentdetails { get; set; }
-            public List<object> matrixuserrequests { get; set; }
-            public List<object> receiver { get; set; }
-            public List<object> sender { get; set; }
-            public WorkerData worker { get; set; }
-        }
-
-        public class WorkerData
-        {
-            public object id { get; set; }
-            public string username { get; set; }
-            public string name { get; set; }
-            public double? amount { get; set; }
-            public double freezed_amount { get; set; }
-            public int comission { get; set; }
-            public int api_id { get; set; }
-            public string api_hash { get; set; }
-            public object subdomain { get; set; }
-            public string hostname { get; set; }
-            public bool is_active { get; set; }
-            public DateTime created_at { get; set; }
-            public Proxy proxy { get; set; }
-            public List<object> workerrequests { get; set; }
-        }
-
-        List<string> DisabledWorkers = new List<string>();
         Dictionary<string, double> DisactiveByPercentWorkers = new Dictionary<string, double>();
         private void loadTheme()
         {
@@ -81,12 +41,6 @@ namespace TantClient.Forms
                 }
             }
         }
-        public class WorkerConversion
-        {
-            public int all_transitions { get; set; }
-            public int button_transitions { get; set; }
-            public int private_transitions { get; set; }
-        }
 
         private void btnApplyFilters_Click(object sender, EventArgs e)
         {
@@ -96,7 +50,6 @@ namespace TantClient.Forms
         }
         private async void getWorkerLinkData(DateTime dateFrom, DateTime dateTo)
         {
-            const string URL = "https://tant.belofflab.com/api/v1/analytics/workers/conversion";
             string[] workerLinkParts = textBoxWorkerLink.Text.Split('=');
             if (workerLinkParts[1].Length == 0)
             {
@@ -104,16 +57,9 @@ namespace TantClient.Forms
                 return;
             }
             richTextBoxResult.Text = "Загрузка...";
-
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(URL);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            string urlParameters = $"?link={textBoxWorkerLink.Text}&date_range={dateFrom.ToString("yyyy-MM-dd")} {dateTo.ToString("yyyy-MM-dd")}";
             try
             {
-                string response = await client.GetStringAsync(urlParameters);
+                string response = await _analyticService.getWorkerConversion(textBoxWorkerLink.Text, dateFrom, dateTo);
                 WorkerConversion workerConversion = JsonConvert.DeserializeObject<WorkerConversion>(response);
 
                 richTextBoxResult.Text = richTextBoxResult.Text = "С " + dateFrom + "\n" +
@@ -130,7 +76,7 @@ namespace TantClient.Forms
         }
         Dictionary<string, List<User>> WorkersData = new Dictionary<string, List<User>>();
         int totalUsers = 0;
-        private async void LoadChartData(string dateTimeFrom, string dateTimeTo)
+        private async void LoadChartData(DateTime dateFrom, DateTime dateTo)
         {
             chart1.Annotations.Clear();
             WorkersData.Clear();
@@ -146,11 +92,10 @@ namespace TantClient.Forms
             chart1.Annotations.Add(LoadingAnnotation);
             try
             {
-                string apiUrl = $"https://tant.belofflab.com/api/v1/analytics/chats/total/?date_range={dateTimeFrom} {dateTimeTo}";
-
-                HttpClient client = new HttpClient();
-                
-                string json = await client.GetStringAsync(apiUrl);
+                string json = await _analyticService.getTotalChats(dateFrom, dateTo);
+                if (json == null) {
+                    return;
+                }
                 User[] UserData = JsonConvert.DeserializeObject<User[]>(json);
                 foreach (var user in UserData)
                 {
@@ -168,74 +113,76 @@ namespace TantClient.Forms
                     }
                     totalUsers++;
                 }
-                renderData();
+                RenderData();
             }
             
-            catch (Exception){}
-        }
-        private void renderData()
-        {
-            chart1.Series["SeriesWorkers"].Points.Clear();
-            DisactiveByPercentWorkers.Clear();
-            chart1.Annotations.Clear();
-            foreach (var worker in WorkersData)
-            {
-                int workerUsers = worker.Value.Count;
-                string workerName = worker.Key;
-                double percent = Math.Round(((double)workerUsers / totalUsers) * 100, 2);
-                if (percent < 5)
-                {
-                    DisactiveByPercentWorkers.Add(workerName, percent);
-                    continue;
-                }
-                int index = chart1.Series["SeriesWorkers"].Points.AddXY(worker.Key, workerUsers);
-                chart1.Series["SeriesWorkers"].Points[index].Tag = worker.Key;
-                chart1.Series["SeriesWorkers"].Points[index].Label = $"{percent}%";
-                chart1.Series["SeriesWorkers"].Points[index].LabelBackColor = Color.Transparent;
-                chart1.Series["SeriesWorkers"].Points[index].LabelForeColor = Color.White;
-                chart1.Series["SeriesWorkers"].Points[index].LegendText = workerName;
+            catch (ObjectDisposedException) {
+                // При смене окна
             }
-            double DisactiveWorkersPercent = Math.Round(DisactiveByPercentWorkers.Sum(worker => worker.Value), 2);
-            if (DisactiveWorkersPercent > 1.0)
-            {
-                LegendItem LegendItemDisabledByPercent = new LegendItem();
-                string DisactiveWorkersName = $"Прочее (<5%) ({DisactiveWorkersPercent}%)";
-                int index = chart1.Series["SeriesWorkers"].Points.AddXY(DisactiveWorkersName, DisactiveWorkersPercent);
-                chart1.Series["SeriesWorkers"].Points[index].Tag = DisactiveWorkersName;
-                chart1.Series["SeriesWorkers"].Points[index].Label = $"{DisactiveWorkersPercent}%";
-                chart1.Series["SeriesWorkers"].Points[index].LabelBackColor = Color.Transparent;
-                chart1.Series["SeriesWorkers"].Points[index].LabelForeColor = Color.White;
-                chart1.Series["SeriesWorkers"].Points[index].LegendText = DisactiveWorkersName;
-            }
-            TextAnnotation annotation = new TextAnnotation();
-            annotation.Text = "Всего: " + totalUsers.ToString();
-            annotation.X = 0;
-            annotation.Y = 0;
-            annotation.AnchorAlignment = ContentAlignment.MiddleCenter;
-            annotation.Alignment = ContentAlignment.MiddleCenter;
-            annotation.ForeColor = Color.FromArgb(41, 47, 51);
-            annotation.Font = new Font("Microsoft YaHei", 12, FontStyle.Bold);
-            chart1.Annotations.Add(annotation);
-        }
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
 
+        }
+        private void RenderData()
+        {
+            try
+            {
+                chart1.Series["SeriesWorkers"].Points.Clear();
+                DisactiveByPercentWorkers.Clear();
+                chart1.Annotations.Clear();
+                foreach (var worker in WorkersData)
+                {
+                    int workerUsers = worker.Value.Count;
+                    string workerName = worker.Key;
+                    double percent = Math.Round(((double)workerUsers / totalUsers) * 100, 2);
+                    if (percent < 5)
+                    {
+                        DisactiveByPercentWorkers.Add(workerName, percent);
+                        continue;
+                    }
+                    int index = chart1.Series["SeriesWorkers"].Points.AddXY(worker.Key, workerUsers);
+                    chart1.Series["SeriesWorkers"].Points[index].Tag = worker.Key;
+                    chart1.Series["SeriesWorkers"].Points[index].Label = $"{percent}%";
+                    chart1.Series["SeriesWorkers"].Points[index].LabelBackColor = Color.Transparent;
+                    chart1.Series["SeriesWorkers"].Points[index].LabelForeColor = Color.White;
+                    chart1.Series["SeriesWorkers"].Points[index].LegendText = workerName;
+                }
+                double DisactiveWorkersPercent = Math.Round(DisactiveByPercentWorkers.Sum(worker => worker.Value), 2);
+                if (DisactiveWorkersPercent > 1.0)
+                {
+                    LegendItem LegendItemDisabledByPercent = new LegendItem();
+                    string DisactiveWorkersName = $"Прочее (<5%) ({DisactiveWorkersPercent}%)";
+                    int index = chart1.Series["SeriesWorkers"].Points.AddXY(DisactiveWorkersName, DisactiveWorkersPercent);
+                    chart1.Series["SeriesWorkers"].Points[index].Tag = DisactiveWorkersName;
+                    chart1.Series["SeriesWorkers"].Points[index].Label = $"{DisactiveWorkersPercent}%";
+                    chart1.Series["SeriesWorkers"].Points[index].LabelBackColor = Color.Transparent;
+                    chart1.Series["SeriesWorkers"].Points[index].LabelForeColor = Color.White;
+                    chart1.Series["SeriesWorkers"].Points[index].LegendText = DisactiveWorkersName;
+                }
+                TextAnnotation annotation = new TextAnnotation
+                {
+                    Text = "Всего: " + totalUsers.ToString(),
+                    X = 0,
+                    Y = 0,
+                    AnchorAlignment = ContentAlignment.MiddleCenter,
+                    Alignment = ContentAlignment.MiddleCenter,
+                    ForeColor = Color.FromArgb(41, 47, 51),
+                    Font = new Font("Microsoft YaHei", 12, FontStyle.Bold)
+                };
+                chart1.Annotations.Add(annotation);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private void buttonTrafficGo_Click(object sender, EventArgs e)
         {
             if (dateTimePickerTrafficFrom.Value > DateTime.Now) {
                 MessageBox.Show("Некорректно задан период");
-                return;
             } else {
-                buttonTrafficGo.Enabled = false;
-                buttonTrafficGo.Text = "Загрузка...";
                 LoadChartData(
-                    dateTimePickerTrafficFrom.Value.ToString("yyyy-MM-dd"),
-                    dateTimePickerTrafficTo.Value.ToString("yyyy-MM-dd")
+                    dateTimePickerTrafficFrom.Value,
+                    dateTimePickerTrafficTo.Value
                 );
-                buttonTrafficGo.Text = ">";
-                buttonTrafficGo.Enabled = true;
             }
         }
     }
