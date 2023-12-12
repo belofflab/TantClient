@@ -80,16 +80,19 @@
     <Compile Include="MainMenuForm.Designer.cs">
       <DependentUpon>MainMenuForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\PaymentDetail.cs" />
+    <Compile Include="Models\ProjectInfo.cs" />
     <Compile Include="Models\Proxy.cs" />
     <Compile Include="Models\TotalConversion.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\Worker.cs" />
-    <Compile Include="Models\WorkerConversion.cs" />
-    <Compile Include="Models\WorkerPenaltyData.cs" />
-    <Compile Include="Models\WorkerReceiptDetail.cs" />
-    <Compile Include="Models\WorkerRewardData.cs" />
+    <Compile Include="Models\Worker\Worker.cs" />
+    <Compile Include="Models\Worker\WorkerConversion.cs" />
+    <Compile Include="Models\Worker\WorkerPenaltyData.cs" />
+    <Compile Include="Models\Worker\WorkerReceiptDetail.cs" />
+    <Compile Include="Models\Worker\WorkerRewardData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AdminService.cs" />
     <Compile Include="Services\AnalyticService.cs" />
     <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\WorkerService.cs" />

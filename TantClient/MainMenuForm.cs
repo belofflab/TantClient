@@ -2,15 +2,18 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using TantClient.Models;
+using TantClient.Services;
 
 namespace TantClient
 {
     public partial class TantClient : Form
     {
-        private AdminInfo adminInformation;
+        private readonly AdminService _adminService;
+        private readonly WorkerService _workerService;
+        private ProjectInfo projectInfo;
         private Worker[] workersInformation;
         private PaymentDetail[] paymentDetails;
         private Button currentButton;
@@ -18,54 +21,13 @@ namespace TantClient
         public TantClient()
         {
             InitializeComponent();
+            _adminService = new AdminService();
+            _workerService = new WorkerService();
             loadData();
             btnCloseChildForm.Visible = false;
             this.Text = string.Empty;
             this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
         }
-
-        public class AdminInfo
-        {
-            public double total { get; set; }
-            public double marginal { get; set; }
-            public double owed { get; set; }
-        }
-
-        public class Proxy
-        {
-            public long id { get; set; }
-            public string host { get; set; }
-            public string port { get; set; }
-            public string username { get; set; }
-            public string password { get; set; }
-            public string scheme { get; set; }
-
-        }
-
-        public class Worker
-        {
-            public long id { get; set; }
-            public string username { get; set; }
-            public string name { get; set; }
-            public double amount { get; set; }
-            public double freezed_amount { get; set; }
-            public int comission { get; set; }
-            private int api_id { get; set; }
-            private string api_hash { get; set; }
-            public string hostname { get; set; }
-            public string subdomain { get; set; }
-            public Boolean is_active { get; set; }
-            public DateTime created_at { get; set; }
-            private Proxy proxy { get; set; }
-        }
-
-        public class PaymentDetail
-        {
-            public int id { get; set; }
-            public string name { get; set; }
-            public string text { get; set; }
-        }
-
 
         [DllImport("user32.dll", EntryPoint = "ReleaseCapture")]
         private extern static void ReleaseCapture();
@@ -94,7 +56,7 @@ namespace TantClient
 
         private void loadData()
         {
-            adminInformation = null;
+            projectInfo = null;
             workersInformation = null;
             paymentDetails = null;
             getAdminData();
@@ -104,18 +66,16 @@ namespace TantClient
         private async void getAdminData()
         {
             richTextBoxBaseInfo.Clear();
-            HttpClient client = new HttpClient();
-            string json = await client.GetStringAsync("https://tant.belofflab.com/api/v1/admin/info/");
-            adminInformation = JsonConvert.DeserializeObject<AdminInfo>(json);
-            richTextBoxBaseInfo.Text = "Общий доход: " + adminInformation.total.ToString() + "₽" + "\n" +
-                                       "Маржа: " + adminInformation.marginal.ToString() + "₽" + "\n" +
-                                       "Долг работникам: " + adminInformation.owed.ToString() + "₽" + "\n";
+            string json = await _adminService.getProjectInfo();
+            projectInfo = JsonConvert.DeserializeObject<ProjectInfo>(json);
+            richTextBoxBaseInfo.Text = "Общий доход: " + projectInfo.total.ToString() + "₽" + "\n" +
+                                       "Маржа: " + projectInfo.marginal.ToString() + "₽" + "\n" +
+                                       "Долг работникам: " + projectInfo.owed.ToString() + "₽" + "\n";
         }
         private async void getWorkers()
         {
             richTextBoxWorkers.Clear();
-            HttpClient client = new HttpClient();
-            string json = await client.GetStringAsync("https://tant.belofflab.com/api/v1/workers/");
+            string json = await _workerService.getWorkers();
             workersInformation = JsonConvert.DeserializeObject<Worker[]>(json);
 
             var SortedWorkers = workersInformation.OrderByDescending(worker => worker.amount).ToArray();
@@ -140,8 +100,7 @@ namespace TantClient
         private async void getPaymentDetails()
         {
             richTextBoxPaymentDetails.Clear();
-            HttpClient client = new HttpClient();
-            string json = await client.GetStringAsync("https://tant.belofflab.com/api/v1/admin/payment/details/");
+            string json = await _adminService.getPaymentDetails();
             paymentDetails = JsonConvert.DeserializeObject<PaymentDetail[]>(json);
 
             for (int i = 0; i < paymentDetails.Length; i++)
